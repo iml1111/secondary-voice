@@ -120,10 +120,10 @@ def mel2wav(src_num, target_mel, save_path):
 
     with torch.no_grad():
         text, mel_source, speakers, f0_padded, input_lengths, output_lengths, max_input_len, _ = batch
-        text=text
-        mel_source = mel_source
-        mel_reference = target_mel
-        f0_padded = f0_padded
+        text=text.cuda()
+        mel_source = mel_source.cuda()
+        mel_reference = target_mel.cuda()
+        f0_padded = f0_padded.cuda()
         mel_predicted, alignment, residual = net.inference(text, mel_source, mel_reference, f0_padded)
 
     with torch.no_grad():
