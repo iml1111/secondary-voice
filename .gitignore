@@ -2,10 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+hifi/
+.DS_Store
 # C extensions
 *.so
-
+pretrained_models/
 # Distribution / packaging
 .Python
 build/
