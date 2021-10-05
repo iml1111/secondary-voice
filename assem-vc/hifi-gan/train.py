@@ -19,6 +19,9 @@ from models import Generator, MultiPeriodDiscriminator, MultiScaleDiscriminator,
     discriminator_loss
 from utils import plot_spectrogram, scan_checkpoint, load_checkpoint, save_checkpoint
 
+import warnings
+warnings.filterwarnings("ignore")
+
 torch.backends.cudnn.benchmark = True
 
 
@@ -197,6 +200,10 @@ def train(rank, a, h):
                             y_g_hat_mel = mel_spectrogram(y_g_hat.squeeze(1), h.n_fft, h.num_mels, h.sampling_rate,
                                                           h.hop_size, h.win_size,
                                                           h.fmin, h.fmax_for_loss)
+                                
+                            temp = torch.zeros(1, 80, 1).cuda()
+                            y_mel = torch.cat((y_mel, temp), 2)
+
                             val_err_tot += F.l1_loss(y_mel, y_g_hat_mel).item()
 
                             if j <= 4:
@@ -233,13 +240,13 @@ def main():
     parser.add_argument('--group_name', default=None)
     parser.add_argument('--input_wavs_dir', default='LJSpeech-1.1/wavs')
     parser.add_argument('--input_mels_dir', default='ft_dataset')
-    parser.add_argument('--input_training_file', default='LJSpeech-1.1/training.txt')
-    parser.add_argument('--input_validation_file', default='LJSpeech-1.1/validation.txt')
+    parser.add_argument('--input_training_file', default='LJSpeech-1.1/train.txt')
+    parser.add_argument('--input_validation_file', default='LJSpeech-1.1/valid.txt')
     parser.add_argument('--checkpoint_path', default='cp_hifigan')
     parser.add_argument('--config', default='')
-    parser.add_argument('--training_epochs', default=3100, type=int)
+    parser.add_argument('--training_epochs', default=3000, type=int)
     parser.add_argument('--stdout_interval', default=5, type=int)
-    parser.add_argument('--checkpoint_interval', default=5000, type=int)
+    parser.add_argument('--checkpoint_interval', default=500, type=int)
     parser.add_argument('--summary_interval', default=100, type=int)
     parser.add_argument('--validation_interval', default=1000, type=int)
     parser.add_argument('--fine_tuning', default=False, type=bool)
